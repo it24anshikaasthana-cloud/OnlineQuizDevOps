@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QuizMaster - Online Quiz Management</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <div class="logo">
+        <span class="logo-icon">Q</span>
+        <span>QuizMaster</span>
+    </div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#about">About</a>
+    </nav>
+
+    <button class="nav-login"
+            onclick="document.getElementById('username').focus()">
+        Login
+    </button>
+
+</header>
+
+
+<main class="hero" id="home">
+
+    <section class="hero-content">
+
+        <div class="badge">
+            🎓 Smart Learning Platform
+        </div>
+
+        <h1>
+            Test Your Knowledge.
+            <span>Improve Your Skills.</span>
+        </h1>
+
+        <p>
+            Welcome to QuizMaster, an online quiz management
+            platform where you can attempt quizzes, check your
+            performance and improve your knowledge.
+        </p>
+
+        <div class="stats">
+
+            <div>
+                <strong>5+</strong>
+                <small>Quiz Categories</small>
+            </div>
+
+            <div>
+                <strong>100+</strong>
+                <small>Questions</small>
+            </div>
+
+            <div>
+                <strong>100</strong>
+                <small>Marks / Quiz</small>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="login-card">
+
+        <div class="card-icon">
+            🔐
+        </div>
+
+        <h2>Welcome Back!</h2>
+
+        <p class="login-subtitle">
+            Login to continue your quiz journey
+        </p>
+
+        <form id="loginForm">
+
+            <div class="input-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Enter your username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+            </div>
+
+
+            <div class="remember">
+
+                <label>
+                    <input type="checkbox">
+                    Remember me
+                </label>
+
+                <a href="#">
+                    Forgot password?
+                </a>
+
+            </div>
+
+
+            <button
+                type="submit"
+                id="loginButton"
+                class="login-button">
+
+                Login to QuizMaster →
+
+            </button>
+
+            <p id="loginError"></p>
+
+        </form>
+
+        <div class="demo-login">
+
+            <span>Demo Account</span>
+
+            <p>
+                Username: <b>admin</b>
+                &nbsp; | &nbsp;
+                Password: <b>admin123</b>
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<section class="features" id="features">
+
+    <div class="section-title">
+
+        <span>FEATURES</span>
+
+        <h2>Everything You Need to Learn Better</h2>
+
+        <p>
+            Take quizzes, track your performance and
+            build your knowledge.
+        </p>
+
+    </div>
+
+
+    <div class="feature-grid">
+
+        <div class="feature-card">
+
+            <div class="feature-icon">📝</div>
+
+            <h3>Multiple Quizzes</h3>
+
+            <p>
+                Attempt quizzes from Java, C++, HTML,
+                CSS and other subjects.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">⏱️</div>
+
+            <h3>Timed Quizzes</h3>
+
+            <p>
+                Challenge yourself with time-based
+                quiz sessions.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">📊</div>
+
+            <h3>Track Results</h3>
+
+            <p>
+                View your scores and understand
+                your quiz performance.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">🏆</div>
+
+            <h3>Improve Your Skills</h3>
+
+            <p>
+                Practice regularly and improve
+                your knowledge.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<footer id="about">
+
+    <div class="footer-logo">
+        <span class="logo-icon">Q</span>
+        QuizMaster
+    </div>
+
+    <p>
+        Online Quiz Management System
+    </p>
+
+    <p class="copyright">
+        © 2026 QuizMaster. All Rights Reserved.
+    </p>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

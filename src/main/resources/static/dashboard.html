@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QuizMaster - Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="dashboard-navbar">
+
+        <div class="logo">
+            <span class="logo-icon">Q</span>
+            <span>QuizMaster</span>
+        </div>
+
+        <nav class="dashboard-nav-links">
+            <a href="dashboard.html">Home</a>
+            <a href="#quizLibrary">Quizzes</a>
+            <a href="#results">My Results</a>
+        </nav>
+
+        <div class="user-area">
+
+            <div class="user-avatar">
+                👤
+            </div>
+
+            <span id="dashboardUsername">
+                Student
+            </span>
+
+            <button
+                type="button"
+                id="dashboardLogout"
+                class="logout-button">
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="dashboard-main">
+
+        <!-- ================= HERO ================= -->
+
+        <section class="dashboard-hero">
+
+            <div>
+
+                <h1>
+                    👋 Welcome back!
+                </h1>
+
+                <p>
+                    Learn. Practice. Achieve.
+                </p>
+
+                <p>
+                    Test your knowledge with interactive
+                    quizzes and track your learning progress.
+                </p>
+
+                <button
+                    type="button"
+                    class="explore-button"
+                    onclick="document.getElementById('quizLibrary').scrollIntoView({behavior:'smooth'})">
+
+                    Explore Quizzes →
+
+                </button>
+
+            </div>
+
+
+            <div>
+
+                <h3>🏆</h3>
+
+                <h2 id="heroBestScore">
+                    0/100
+                </h2>
+
+                <p>
+                    Best Score
+                </p>
+
+                <small>
+                    Keep learning and improving!
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= QUICK STATS ================= -->
+
+        <section class="quick-stats">
+
+            <div class="stat-card">
+                <h3>5</h3>
+                <p>Available Quizzes</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>50+</h3>
+                <p>Total Questions</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>40</h3>
+                <p>Passing Marks</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>10</h3>
+                <p>Marks / Question</p>
+            </div>
+
+        </section>
+
+
+        <!-- ================= QUIZ LIBRARY ================= -->
+
+        <section id="quizLibrary" class="quiz-library">
+
+            <div class="section-title">
+
+                <span>QUIZ LIBRARY</span>
+
+                <h2>
+                    Choose Your Quiz
+                </h2>
+
+                <p>
+                    Select a subject and test your knowledge.
+                </p>
+
+            </div>
+
+
+            <!-- SEARCH -->
+
+            <div class="search-container">
+
+                <input
+                    type="text"
+                    id="quizSearch"
+                    placeholder="🔍 Search quizzes..."
+                    autocomplete="off">
+
+            </div>
+
+
+            <!-- QUIZ GRID -->
+
+            <div
+                class="quiz-grid"
+                id="quizGrid">
+
+
+                <!-- JAVA -->
+
+                <div
+                    class="quiz-card"
+                    data-name="Java Programming">
+
+                    <h3>
+                        ☕ Java Programming
+                    </h3>
+
+                    <p>
+                        Test your knowledge of Java
+                        fundamentals and programming.
+                    </p>
+
+                    <p>
+                        📝 10 Questions
+                        &nbsp;&nbsp;
+                        🏆 100 Marks
+                    </p>
+
+                    <button
+                        type="button"
+                        class="start-quiz"
+                        onclick="startQuiz('java')">
+
+                        Start Quiz →
+
+                    </button>
+
+                </div>
+
+
+                <!-- C++ -->
+
+                <div
+                    class="quiz-card"
+                    data-name="C++ Programming">
+
+                    <h3>
+                        💻 C++ Programming
+                    </h3>
+
+                    <p>
+                        Practice C++ concepts,
+                        syntax and programming basics.
+                    </p>
+
+                    <p>
+                        📝 10 Questions
+                        &nbsp;&nbsp;
+                        🏆 100 Marks
+                    </p>
+
+                    <button
+                        type="button"
+                        class="start-quiz"
+                        onclick="startQuiz('cpp')">
+
+                        Start Quiz →
+
+                    </button>
+
+                </div>
+
+
+                <!-- HTML -->
+
+                <div
+                    class="quiz-card"
+                    data-name="HTML Basics">
+
+                    <h3>
+                        🌐 HTML Basics
+                    </h3>
+
+                    <p>
+                        Test your understanding of
+                        HTML tags and web structure.
+                    </p>
+
+                    <p>
+                        📝 10 Questions
+                        &nbsp;&nbsp;
+                        🏆 100 Marks
+                    </p>
+
+                    <button
+                        type="button"
+                        class="start-quiz"
+                        onclick="startQuiz('html')">
+
+                        Start Quiz →
+
+                    </button>
+
+                </div>
+
+
+                <!-- CSS -->
+
+                <div
+                    class="quiz-card"
+                    data-name="CSS Fundamentals">
+
+                    <h3>
+                        🎨 CSS Fundamentals
+                    </h3>
+
+                    <p>
+                        Test your knowledge of styling,
+                        selectors and layouts.
+                    </p>
+
+                    <p>
+                        📝 10 Questions
+                        &nbsp;&nbsp;
+                        🏆 100 Marks
+                    </p>
+
+                    <button
+                        type="button"
+                        class="start-quiz"
+                        onclick="startQuiz('css')">
+
+                        Start Quiz →
+
+                    </button>
+
+                </div>
+
+
+                <!-- FINANCIAL -->
+
+                <div
+                    class="quiz-card"
+                    data-name="Financial Literacy">
+
+                    <h3>
+                        💰 Financial Literacy
+                    </h3>
+
+                    <p>
+                        Learn about savings, budgeting,
+                        banking and personal finance.
+                    </p>
+
+                    <p>
+                        📝 10 Questions
+                        &nbsp;&nbsp;
+                        🏆 100 Marks
+                    </p>
+
+                    <button
+                        type="button"
+                        class="start-quiz"
+                        onclick="startQuiz('finance')">
+
+                        Start Quiz →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- NO SEARCH RESULT -->
+
+            <p
+                id="noQuiz"
+                style="display:none; text-align:center; margin-top:25px; color:#6b7280;">
+
+                No quiz found.
+
+            </p>
+
+        </section>
+
+
+        <!-- ================= RESULTS ================= -->
+
+        <section
+            id="results"
+            class="results-section">
+
+            <div class="section-title">
+
+                <span>
+                    PERFORMANCE
+                </span>
+
+                <h2>
+                    My Previous Results
+                </h2>
+
+                <p>
+                    Track your quiz performance and progress.
+                </p>
+
+            </div>
+
+
+            <div class="quick-stats">
+
+                <div class="stat-card">
+
+                    <h3 id="dashboardScore">
+                        0/100
+                    </h3>
+
+                    <p>
+                        Current Score
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3 id="bestScore">
+                        0/100
+                    </h3>
+
+                    <p>
+                        Best Score
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3 id="lastScore">
+                        0/100
+                    </h3>
+
+                    <p>
+                        Last Score
+                    </p>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <h3 id="resultStatus">
+                        Not Attempted
+                    </h3>
+
+                    <p>
+                        Quiz Status
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+
+            <span class="logo-icon">
+                Q
+            </span>
+
+            QuizMaster
+
+        </div>
+
+        <p>
+            Online Quiz Management System
+        </p>
+
+        <p class="copyright">
+            © 2026 QuizMaster. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

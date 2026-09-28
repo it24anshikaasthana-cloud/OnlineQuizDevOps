@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>QuizMaster - Quiz Result</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body class="result-page">
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="result-navbar">
+
+        <div class="logo">
+
+            <span class="logo-icon">
+                Q
+            </span>
+
+            <span>
+                QuizMaster
+            </span>
+
+        </div>
+
+
+        <div>
+            <strong>
+                Quiz Result
+            </strong>
+        </div>
+
+
+        <button
+            type="button"
+            id="logoutButton"
+            class="logout-button">
+
+            Logout
+
+        </button>
+
+    </header>
+
+
+
+    <!-- ================= RESULT MAIN ================= -->
+
+    <main class="result-main">
+
+
+        <!-- SUCCESS ICON -->
+
+        <div class="result-icon">
+            ✓
+        </div>
+
+
+        <!-- TITLE -->
+
+        <h1 class="result-title">
+            Quiz Completed!
+        </h1>
+
+
+        <!-- QUIZ NAME -->
+
+        <p
+            id="resultQuizName"
+            style="
+                font-size:18px;
+                font-weight:600;
+                color:#2563eb;
+                margin-top:-20px;
+                margin-bottom:25px;
+            ">
+
+            Quiz
+
+        </p>
+
+
+        <!-- ================= SCORE CARD ================= -->
+
+        <section class="score-card">
+
+
+            <p>
+                Your Final Score
+            </p>
+
+
+            <div
+                id="score"
+                class="final-score">
+
+                Your Score: 0 / 100
+
+            </div>
+
+
+            <div
+                id="resultStatus"
+                class="result-status">
+
+                RESULT
+
+            </div>
+
+
+            <!-- SCORE PROGRESS -->
+
+            <div class="score-progress">
+
+                <div
+                    id="scoreProgress">
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= PERFORMANCE ================= -->
+
+        <section class="performance-grid">
+
+
+            <!-- CORRECT -->
+
+            <div class="performance-card">
+
+                <div
+                    style="
+                        font-size:28px;
+                        margin-bottom:8px;
+                    ">
+
+                    ✅
+
+                </div>
+
+                <h3 id="correctAnswers">
+                    0
+                </h3>
+
+                <p>
+                    Correct Answers
+                </p>
+
+            </div>
+
+
+            <!-- WRONG -->
+
+            <div class="performance-card">
+
+                <div
+                    style="
+                        font-size:28px;
+                        margin-bottom:8px;
+                    ">
+
+                    ❌
+
+                </div>
+
+                <h3 id="wrongAnswers">
+                    0
+                </h3>
+
+                <p>
+                    Wrong Answers
+                </p>
+
+            </div>
+
+
+            <!-- TOTAL -->
+
+            <div class="performance-card">
+
+                <div
+                    style="
+                        font-size:28px;
+                        margin-bottom:8px;
+                    ">
+
+                    📝
+
+                </div>
+
+                <h3>
+                    10
+                </h3>
+
+                <p>
+                    Total Questions
+                </p>
+
+            </div>
+
+
+            <!-- MARKS -->
+
+            <div class="performance-card">
+
+                <div
+                    style="
+                        font-size:28px;
+                        margin-bottom:8px;
+                    ">
+
+                    🏆
+
+                </div>
+
+                <h3>
+                    10
+                </h3>
+
+                <p>
+                    Marks Per Question
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= PASSING INFO ================= -->
+
+        <div class="passing-info">
+
+            Passing Score:
+            <strong>
+                40 / 100
+            </strong>
+
+            &nbsp; | &nbsp;
+
+            You need at least
+            <strong>
+                4 correct answers
+            </strong>
+            to pass.
+
+        </div>
+
+
+
+        <!-- ================= ACTION BUTTONS ================= -->
+
+        <div class="result-actions">
+
+
+            <button
+                type="button"
+                class="dashboard-button"
+                onclick="goToDashboard()">
+
+                ← Dashboard
+
+            </button>
+
+
+            <button
+                type="button"
+                class="retry-button"
+                onclick="retryQuiz()">
+
+                🔄 Try Again
+
+            </button>
+
+
+            <button
+                type="button"
+                class="logout-result-button"
+                onclick="logoutUser()">
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="result-footer">
+
+        <div class="footer-logo">
+
+            <span class="logo-icon">
+                Q
+            </span>
+
+            QuizMaster
+
+        </div>
+
+        <p>
+            Online Quiz Management System
+        </p>
+
+        <p class="copyright">
+            © 2026 QuizMaster. All Rights Reserved.
+        </p>
+
+    </footer>
+
+
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
