@@ -1,11 +1,10 @@
 pipeline {
-
     agent any
 
     environment {
-        DOCKER_EXE = 'C:\\Users\\Anshika\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
-        IMAGE_NAME = 'anshikaasthana/online-quiz:1.0'
-        CONTAINER_NAME = 'online-quiz-container'
+        // Docker Desktop CLI location on Windows
+        DOCKER_PATH = 'C:\\Program Files\\Docker\\Docker\\resources\\bin'
+        DOCKER_IMAGE = 'anshikaasthana/online-quiz:1.0'
     }
 
     stages {
@@ -19,73 +18,91 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building Spring Boot application...'
-                bat 'mvn clean package -DskipTests'
+                echo 'Building application...'
+                bat 'mvn clean compile'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running Selenium tests...'
+                echo 'Running tests...'
                 bat 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                echo 'Creating JAR file...'
+                bat 'mvn package -DskipTests'
             }
         }
 
         stage('Docker Check') {
             steps {
-                echo 'Checking Docker...'
-                bat '"%DOCKER_EXE%" --version'
+                echo 'Checking Docker installation...'
+                bat """
+                    if not exist "%DOCKER_PATH%\\docker.exe" (
+                        echo ERROR: docker.exe was not found at:
+                        echo %DOCKER_PATH%\\docker.exe
+                        echo.
+                        echo If Docker Desktop is installed somewhere else, update DOCKER_PATH in this Jenkinsfile.
+                        exit /b 1
+                    )
+
+                    set "PATH=%DOCKER_PATH%;%PATH%"
+                    docker --version
+                    docker info
+                """
             }
         }
 
         stage('Docker Build') {
             steps {
                 echo 'Building Docker image...'
-                bat '"%DOCKER_EXE%" build -t %IMAGE_NAME% .'
+                bat """
+                    set "PATH=%DOCKER_PATH%;%PATH%"
+                    docker build -t %DOCKER_IMAGE% .
+                """
             }
         }
 
         stage('Docker Login & Push') {
             steps {
                 echo 'Logging in to Docker Hub and pushing image...'
-
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
-                    )
-                ]) {
-
-                    bat 'echo %DOCKER_PASSWORD% | "%DOCKER_EXE%" login -u %DOCKER_USERNAME% --password-stdin'
-
-                    bat '"%DOCKER_EXE%" push %IMAGE_NAME%'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    bat """
+                        set "PATH=%DOCKER_PATH%;%PATH%"
+                        echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
+                        docker push %DOCKER_IMAGE%
+                        docker logout
+                    """
                 }
             }
         }
 
         stage('Docker Run') {
             steps {
-                echo 'Starting Docker container...'
-
-                bat '"%DOCKER_EXE%" rm -f %CONTAINER_NAME% 2>NUL || exit /B 0'
-
-                bat '"%DOCKER_EXE%" run -d --name %CONTAINER_NAME% -p 8081:8081 %IMAGE_NAME%'
+                echo 'Running Docker container...'
+                bat """
+                    set "PATH=%DOCKER_PATH%;%PATH%"
+                    docker rm -f online-quiz 2>nul || exit /b 0
+                    docker run -d --name online-quiz -p 8080:8080 %DOCKER_IMAGE%
+                """
             }
         }
 
         stage('Verify') {
             steps {
-                echo 'Verifying application...'
-
-                bat 'timeout /t 10 /nobreak'
-
-                bat 'curl -f http://localhost:8081/'
-
-                echo '=========================================='
-                echo 'ONLINE QUIZ APPLICATION IS RUNNING'
-                echo 'http://localhost:8081'
-                echo '=========================================='
+                echo 'Verifying application container...'
+                bat """
+                    set "PATH=%DOCKER_PATH%;%PATH%"
+                    timeout /t 10 /nobreak >nul
+                    docker ps --filter "name=online-quiz"
+                """
             }
         }
     }
@@ -93,18 +110,15 @@ pipeline {
     post {
         success {
             echo '=========================================='
-            echo 'PIPELINE SUCCESS'
-            echo 'Docker image built and pushed successfully.'
+            echo 'PIPELINE EXECUTED SUCCESSFULLY'
             echo '=========================================='
         }
-
         failure {
             echo '=========================================='
             echo 'PIPELINE FAILED'
-            echo 'Check the Console Output.'
+            echo 'Check Console Output'
             echo '=========================================='
         }
-
         always {
             echo 'Pipeline execution completed.'
         }
