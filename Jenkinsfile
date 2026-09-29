@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     environment {
-        // Docker Desktop CLI location on Windows
-        DOCKER_PATH = 'C:\\Program Files\\Docker\\Docker\\resources\\bin'
+        DOCKER_PATH = 'C:\\Users\\Anshika\\AppData\\Local\\Programs\\Docker\\DockerDesktop\\resources\\bin'
         DOCKER_IMAGE = 'anshikaasthana/online-quiz:1.0'
     }
 
@@ -42,16 +41,12 @@ pipeline {
                 echo 'Checking Docker installation...'
                 bat """
                     if not exist "%DOCKER_PATH%\\docker.exe" (
-                        echo ERROR: docker.exe was not found at:
-                        echo %DOCKER_PATH%\\docker.exe
-                        echo.
-                        echo If Docker Desktop is installed somewhere else, update DOCKER_PATH in this Jenkinsfile.
+                        echo ERROR: docker.exe was not found.
                         exit /b 1
                     )
 
                     set "PATH=%DOCKER_PATH%;%PATH%"
                     docker --version
-                    docker info
                 """
             }
         }
@@ -69,6 +64,7 @@ pipeline {
         stage('Docker Login & Push') {
             steps {
                 echo 'Logging in to Docker Hub and pushing image...'
+
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credentials',
                     usernameVariable: 'DOCKER_USERNAME',
@@ -89,7 +85,7 @@ pipeline {
                 echo 'Running Docker container...'
                 bat """
                     set "PATH=%DOCKER_PATH%;%PATH%"
-                    docker rm -f online-quiz 2>nul || exit /b 0
+                    docker rm -f online-quiz 2>nul
                     docker run -d --name online-quiz -p 8080:8080 %DOCKER_IMAGE%
                 """
             }
@@ -113,12 +109,14 @@ pipeline {
             echo 'PIPELINE EXECUTED SUCCESSFULLY'
             echo '=========================================='
         }
+
         failure {
             echo '=========================================='
             echo 'PIPELINE FAILED'
             echo 'Check Console Output'
             echo '=========================================='
         }
+
         always {
             echo 'Pipeline execution completed.'
         }
