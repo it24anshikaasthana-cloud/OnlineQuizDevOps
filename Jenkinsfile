@@ -2,6 +2,10 @@ pipeline {
 
     agent any
 
+    environment {
+        DOCKER_PATH = 'C:\\Users\\Anshika\\AppData\\Local\\Programs\\Docker\\DockerDesktop\\resources\\bin'
+    }
+
     stages {
 
         stage('Build') {
@@ -21,13 +25,18 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo 'Building Docker image...'
-                bat '"C:\\Users\\Anshika\\AppData\\Local\\Programs\\Docker\\DockerDesktop\\resources\\bin\\docker.exe" build -t anshikaasthana/online-quiz:1.0 .'
+
+                bat '''
+                set "PATH=%DOCKER_PATH%;%PATH%"
+                docker --version
+                docker build -t anshikaasthana/online-quiz:1.0 .
+                '''
             }
         }
 
         stage('Docker Push') {
             steps {
-                echo 'Logging in to Docker Hub and pushing image...'
+                echo 'Logging in to Docker Hub...'
 
                 withCredentials([
                     usernamePassword(
@@ -38,8 +47,11 @@ pipeline {
                 ]) {
 
                     bat '''
-                    echo %DOCKER_TOKEN% | "C:\\Users\\Anshika\\AppData\\Local\\Programs\\Docker\\DockerDesktop\\resources\\bin\\docker.exe" login -u %DOCKER_USERNAME% --password-stdin
-                    "C:\\Users\\Anshika\\AppData\\Local\\Programs\\Docker\\DockerDesktop\\resources\\bin\\docker.exe" push anshikaasthana/online-quiz:1.0
+                    set "PATH=%DOCKER_PATH%;%PATH%"
+
+                    echo %DOCKER_TOKEN% | docker login -u %DOCKER_USERNAME% --password-stdin
+
+                    docker push anshikaasthana/online-quiz:1.0
                     '''
                 }
             }
@@ -47,18 +59,21 @@ pipeline {
 
         stage('Docker Run') {
             steps {
-                echo 'Running Docker container...'
+                echo 'Starting Online Quiz Docker container...'
 
                 bat '''
-                "C:\\Users\\Anshika\\AppData\\Local\\Programs\\Docker\\DockerDesktop\\resources\\bin\\docker.exe" rm -f online-quiz-container 2>nul
-                "C:\\Users\\Anshika\\AppData\\Local\\Programs\\Docker\\DockerDesktop\\resources\\bin\\docker.exe" run -d --name online-quiz-container -p 8081:8081 anshikaasthana/online-quiz:1.0
+                set "PATH=%DOCKER_PATH%;%PATH%"
+
+                docker rm -f online-quiz-container 2>nul
+
+                docker run -d --name online-quiz-container -p 8081:8081 anshikaastana/online-quiz:1.0
                 '''
             }
         }
 
         stage('Verify') {
             steps {
-                echo 'Verifying Online Quiz Application...'
+                echo 'Verifying application...'
 
                 bat '''
                 timeout /t 10 /nobreak
@@ -70,17 +85,22 @@ pipeline {
 
     post {
         success {
-            echo '======================================'
-            echo 'PIPELINE SUCCESSFUL!'
-            echo 'Online Quiz Docker image pushed.'
-            echo 'Application is running on port 8081.'
-            echo '======================================'
+            echo '''
+========================================
+PIPELINE SUCCESSFUL!
+Online Quiz application deployed.
+Docker image pushed successfully.
+========================================
+'''
         }
 
         failure {
-            echo '======================================'
-            echo 'PIPELINE FAILED - CHECK CONSOLE OUTPUT'
-            echo '======================================'
+            echo '''
+========================================
+PIPELINE FAILED
+Check the Console Output.
+========================================
+'''
         }
     }
 }
