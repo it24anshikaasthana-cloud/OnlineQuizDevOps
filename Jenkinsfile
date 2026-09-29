@@ -3,8 +3,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "anshikaasthana/online-quiz:1.0"
-        DOCKER_EXE = "C:\\Users\\Anshika\\AppData\\Local\\Programs\\Docker\\DockerDesktop\\resources\\bin\\docker.exe"
+        DOCKER_EXE = 'C:\\Users\\Anshika\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
+        IMAGE_NAME = 'anshikaasthana/online-quiz:1.0'
+        CONTAINER_NAME = 'online-quiz-container'
     }
 
     stages {
@@ -18,33 +19,29 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo 'Building application...'
-                bat 'mvn clean compile'
+                echo 'Building Spring Boot application...'
+                bat 'mvn clean package -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                echo 'Running tests...'
+                echo 'Running Selenium tests...'
                 bat 'mvn test'
             }
         }
 
-        stage('Package') {
+        stage('Docker Check') {
             steps {
-                echo 'Creating JAR file...'
-                bat 'mvn package -DskipTests'
+                echo 'Checking Docker...'
+                bat '"%DOCKER_EXE%" --version'
             }
         }
 
         stage('Docker Build') {
             steps {
                 echo 'Building Docker image...'
-
-                bat """
-                "${DOCKER_EXE}" --version
-                "${DOCKER_EXE}" build -t ${DOCKER_IMAGE} .
-                """
+                bat '"%DOCKER_EXE%" build -t %IMAGE_NAME% .'
             }
         }
 
@@ -55,27 +52,25 @@ pipeline {
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub-credentials',
-                        usernameVariable: 'DOCKER_USER',
-                        passwordVariable: 'DOCKER_TOKEN'
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
                     )
                 ]) {
 
-                    bat """
-                    echo %DOCKER_TOKEN% | "${DOCKER_EXE}" login -u %DOCKER_USER% --password-stdin
-                    "${DOCKER_EXE}" push ${DOCKER_IMAGE}
-                    """
+                    bat 'echo %DOCKER_PASSWORD% | "%DOCKER_EXE%" login -u %DOCKER_USERNAME% --password-stdin'
+
+                    bat '"%DOCKER_EXE%" push %IMAGE_NAME%'
                 }
             }
         }
 
         stage('Docker Run') {
             steps {
-                echo 'Running Docker container...'
+                echo 'Starting Docker container...'
 
-                bat """
-                "${DOCKER_EXE}" rm -f online-quiz-container
-                "${DOCKER_EXE}" run -d --name online-quiz-container -p 8082:8081 ${DOCKER_IMAGE}
-                """
+                bat '"%DOCKER_EXE%" rm -f %CONTAINER_NAME% 2>NUL || exit /B 0'
+
+                bat '"%DOCKER_EXE%" run -d --name %CONTAINER_NAME% -p 8081:8081 %IMAGE_NAME%'
             }
         }
 
@@ -83,31 +78,35 @@ pipeline {
             steps {
                 echo 'Verifying application...'
 
-                bat """
-                timeout /t 10 /nobreak
-                curl -I http://localhost:8082
-                """
+                bat 'timeout /t 10 /nobreak'
+
+                bat 'curl -f http://localhost:8081/'
+
+                echo '=========================================='
+                echo 'ONLINE QUIZ APPLICATION IS RUNNING'
+                echo 'http://localhost:8081'
+                echo '=========================================='
             }
         }
     }
 
     post {
         success {
-            echo '''
-            ==========================================
-            PIPELINE SUCCESS
-            Online Quiz Docker Deployment Completed
-            ==========================================
-            '''
+            echo '=========================================='
+            echo 'PIPELINE SUCCESS'
+            echo 'Docker image built and pushed successfully.'
+            echo '=========================================='
         }
 
         failure {
-            echo '''
-            ==========================================
-            PIPELINE FAILED
-            Check Console Output
-            ==========================================
-            '''
+            echo '=========================================='
+            echo 'PIPELINE FAILED'
+            echo 'Check the Console Output.'
+            echo '=========================================='
+        }
+
+        always {
+            echo 'Pipeline execution completed.'
         }
     }
 }
