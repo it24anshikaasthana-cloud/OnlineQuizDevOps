@@ -28,66 +28,20 @@ pipeline {
 
         stage('Selenium Test') {
             steps {
+                bat '''
+                    echo Starting Online Quiz application...
 
-                powershell '''
-                    $app = Start-Process `
-                        -FilePath "java" `
-                        -ArgumentList @(
-                            "-jar",
-                            "target\\online-quiz-devops-1.0.0.jar",
-                            "--server.port=8081"
-                        ) `
-                        -PassThru
+                    start "OnlineQuizApp" /B java -jar target\\online-quiz-devops-1.0.0.jar --server.port=8081
 
-                    try {
+                    echo Waiting for application to start...
 
-                        Write-Host "Starting application..."
+                    timeout /t 10 /nobreak
 
-                        $ready = $false
+                    echo Running Selenium tests...
 
-                        for ($i = 0; $i -lt 30; $i++) {
+                    mvn test "-Dapp.url=http://localhost:8081"
 
-                            try {
-
-                                Invoke-WebRequest `
-                                    -Uri "http://localhost:8081" `
-                                    -UseBasicParsing `
-                                    -TimeoutSec 2 | Out-Null
-
-                                $ready = $true
-
-                                Write-Host "Application is running."
-
-                                break
-
-                            } catch {
-
-                                Start-Sleep -Seconds 1
-                            }
-                        }
-
-                        if (-not $ready) {
-                            throw "Application did not start on port 8081."
-                        }
-
-                        Write-Host "Running Selenium tests..."
-
-                        mvn test "-Dapp.url=http://localhost:8081"
-
-                        if ($LASTEXITCODE -ne 0) {
-                            exit $LASTEXITCODE
-                        }
-
-                    }
-                    finally {
-
-                        Write-Host "Stopping test application..."
-
-                        Stop-Process `
-                            -Id $app.Id `
-                            -Force `
-                            -ErrorAction SilentlyContinue
-                    }
+                    if %ERRORLEVEL% NEQ 0 exit /b %ERRORLEVEL%
                 '''
             }
         }
@@ -99,7 +53,6 @@ pipeline {
         }
 
         stage('Docker Push') {
-
             steps {
 
                 withCredentials([
@@ -122,7 +75,6 @@ pipeline {
         }
 
         stage('Deploy') {
-
             steps {
 
                 withCredentials([
@@ -143,41 +95,21 @@ pipeline {
         }
 
         stage('Verify') {
-
             steps {
 
-                powershell '''
-                    Write-Host "Checking deployed application..."
+                bat '''
+                    echo Checking deployed application...
 
-                    $ok = $false
+                    timeout /t 10 /nobreak
 
-                    for ($i = 0; $i -lt 30; $i++) {
+                    curl -f http://localhost:8081
 
-                        try {
+                    if %ERRORLEVEL% NEQ 0 (
+                        echo Application verification failed.
+                        exit /b 1
+                    )
 
-                            $response = Invoke-WebRequest `
-                                -Uri "http://localhost:8081" `
-                                -UseBasicParsing `
-                                -TimeoutSec 2
-
-                            if ($response.StatusCode -eq 200) {
-
-                                $ok = $true
-
-                                Write-Host "Application is running successfully."
-
-                                break
-                            }
-
-                        } catch {
-
-                            Start-Sleep -Seconds 1
-                        }
-                    }
-
-                    if (-not $ok) {
-                        throw "Application is not responding on port 8081."
-                    }
+                    echo Application is running successfully.
                 '''
             }
         }
@@ -186,20 +118,22 @@ pipeline {
     post {
 
         always {
-
-            junit testResults:
-                'target/surefire-reports/*.xml',
+            junit(
+                testResults: 'target/surefire-reports/*.xml',
                 allowEmptyResults: true
+            )
         }
 
         success {
-
+            echo '=============================================='
             echo 'DEVOPS PIPELINE COMPLETED SUCCESSFULLY'
+            echo '=============================================='
         }
 
         failure {
-
+            echo '=============================================='
             echo 'DEVOPS PIPELINE FAILED - CHECK CONSOLE OUTPUT'
+            echo '=============================================='
         }
     }
 }
