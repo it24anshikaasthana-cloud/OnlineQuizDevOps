@@ -33,15 +33,26 @@ pipeline {
 
                     start "OnlineQuizApp" /B java -jar target\\online-quiz-devops-1.0.0.jar --server.port=8081
 
-                    echo Waiting for application to start...
+                    echo Waiting for application...
 
-                    timeout /t 10 /nobreak
+                    :waitloop
+                    curl -s http://localhost:8081 > nul
+
+                    if %ERRORLEVEL% EQU 0 goto appready
+
+                    timeout /t 1 /nobreak > nul
+                    goto waitloop
+
+                    :appready
+                    echo Application is ready!
 
                     echo Running Selenium tests...
 
-                    mvn test "-Dapp.url=http://localhost:8081"
+                    mvn -q test "-Dapp.url=http://localhost:8081"
 
                     if %ERRORLEVEL% NEQ 0 exit /b %ERRORLEVEL%
+
+                    echo Selenium tests completed successfully.
                 '''
             }
         }
@@ -96,11 +107,10 @@ pipeline {
 
         stage('Verify') {
             steps {
-
                 bat '''
                     echo Checking deployed application...
 
-                    timeout /t 10 /nobreak
+                    timeout /t 5 /nobreak > nul
 
                     curl -f http://localhost:8081
 
